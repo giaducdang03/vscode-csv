@@ -12,7 +12,7 @@ export interface IAppProps {}
 export const App: React.FunctionComponent<IAppProps> = () => {
   return (
     <div className='app'>
-      <h1>CSV Viewer</h1>
+      <h1>CSV Editor</h1>
       <CsvEditor />
     </div>
   );

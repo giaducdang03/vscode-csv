@@ -51,12 +51,54 @@ h1 {
 }
 
 .ag-theme-alpine-dark {
+  /* Gán các biến của ag-grid theo màu của VSCode */
   --ag-background-color: var(--vscode-editor-background);
-  --ag-header-background-color: var(--vscode-editor-background);
-  --ag-odd-row-background-color: var(--vscode-editor-background);
-  --ag-header-foreground-color: var(--vscode-editor-foreground);
   --ag-foreground-color: var(--vscode-editor-foreground);
-  --ag-row-hover-color: var(--vscode-list-hoverBackground);
+  --ag-header-background-color: var(--vscode-editor-background);
+  --ag-header-foreground-color: var(--vscode-editor-foreground);
+  --ag-border-color: var(--vscode-editor-lineHighlightBorder);
   --ag-selected-row-background-color: var(--vscode-editor-selectionBackground);
-  --ag-font-family: var(--vscode-editor-font-family);
+}
+
+/* Áp dụng cho wrapper của grid */
+.ag-theme-alpine-dark .ag-root-wrapper {
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+/* Style cho header của grid */
+.ag-theme-alpine-dark .ag-header {
+  background-color: var(--vscode-editor-background) !important;
+  border-bottom: 1px solid var(--vscode-editor-lineHighlightBorder);
+  color: var(--vscode-editor-foreground) !important;
+}
+
+/* Style cho các ô trong grid */
+.ag-theme-alpine-dark .ag-cell {
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+  border-right: 1px solid var(--vscode-editor-lineHighlightBorder);
+}
+
+/* Style cho các hàng */
+.ag-theme-alpine-dark .ag-row {
+  border-bottom: 1px solid var(--vscode-editor-lineHighlightBorder);
+}
+
+/* Màu nền khi hàng được chọn */
+.ag-theme-alpine-dark .ag-row.ag-row-selected {
+  background-color: var(--vscode-editor-selectionBackground) !important;
+}
+
+.ag-theme-alpine-dark .ag-header-cell-label {
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.ag-theme-alpine-dark .ag-cell-editor input {
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+  border: 1px solid var(--vscode-editor-lineHighlightBorder);
+  padding: 4px;
+  font-size: inherit;
+  font-family: inherit;
 }
