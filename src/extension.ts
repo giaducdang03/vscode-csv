@@ -16,6 +16,9 @@ export function activate(context: vscode.ExtensionContext) {
       const activeEditor = vscode.window.activeTextEditor;
       if (activeEditor?.document.uri.fsPath.endsWith('.csv')) {
         currentFileUri = activeEditor.document.uri;
+      } else {
+        vscode.window.showErrorMessage('Please open a CSV file first');
+        return;
       }
 
       const panel = vscode.window.createWebviewPanel(

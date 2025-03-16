@@ -16,8 +16,21 @@
       {
         "command": "vscode-react-webview-csv-editor.openCsvEditor",
         "title": "React Webview: Open Csv Editor"
+      },
+      {
+        "command": "vscode-react-webview-csv-editor.openCsvEditor",
+        "title": "Edit with CSV Editor"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceExtname == .csv",
+          "command": "vscode-react-webview-csv-editor.openCsvEditor",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

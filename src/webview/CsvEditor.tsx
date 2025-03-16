@@ -11,6 +11,8 @@ interface RowData {
 const CsvEditor: React.FC = () => {
   const [rowData, setRowData] = React.useState<RowData[]>([]);
   const [columnDefs, setColumnDefs] = React.useState<ColDef[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<number[]>([]);
+  const [selectedCols, setSelectedCols] = React.useState<string[]>([]);
 
   const handleLoadCsv = () => {
     messageHandler.request<string>("GET_CSV_CONTENT").then((csvContent) => {
@@ -65,6 +67,31 @@ const CsvEditor: React.FC = () => {
     setRowData(updatedRows);
   };
 
+  const handleDeleteRows = () => {
+    if (selectedRows.length === 0) return;
+    const newRowData = rowData.filter(
+      (_, index) => !selectedRows.includes(index)
+    );
+    setRowData(newRowData);
+    setSelectedRows([]);
+  };
+
+  const handleDeleteColumns = () => {
+    if (selectedCols.length === 0) return;
+    const newColumnDefs = columnDefs.filter(
+      (col) => !selectedCols.includes(col.field!)
+    );
+    const newRowData = rowData.map((row) => {
+      const newRow = { ...row };
+      selectedCols.forEach((field) => delete newRow[field]);
+      return newRow;
+    });
+
+    setColumnDefs(newColumnDefs);
+    setRowData(newRowData);
+    setSelectedCols([]);
+  };
+
   const handleSave = () => {
     const headers = columnDefs.map((col) => col.headerName || "");
     const rows = rowData.map((row) =>
@@ -85,25 +112,54 @@ const CsvEditor: React.FC = () => {
         <button onClick={handleSave}>Save CSV</button>
         <button onClick={handleAddRow}>Add Row</button>
         <button onClick={handleAddColumn}>Add Column</button>
+        <button onClick={handleDeleteRows} disabled={selectedRows.length === 0}>
+          Delete Rows
+        </button>
+        <button
+          onClick={handleDeleteColumns}
+          disabled={selectedCols.length === 0}
+        >
+          Delete Columns
+        </button>
       </div>
 
       <div className="grid-wrapper ag-theme-alpine-dark">
         <AgGridReact
-          cellSelection={true}
           rowData={rowData}
           columnDefs={columnDefs}
           suppressCellFocus={true}
+          rowSelection="multiple"
+          suppressRowClickSelection={true}
+          onSelectionChanged={(event: any) => {
+            const selected = event.api
+              .getSelectedNodes()
+              .map((node: any) => node.rowIndex);
+            setSelectedRows(selected);
+          }}
           defaultColDef={{
             sortable: true,
             filter: true,
             resizable: true,
+            checkboxSelection: true,
+            cellStyle: {
+              backgroundColor: 'var(--vscode-editor-background)',
+              color: 'var(--vscode-editor-foreground)',
+            },
           }}
-          onCellValueChanged={(params: any) => {
-            const updatedRows = [...rowData];
-            updatedRows[params.rowIndex][params.colDef.field!] =
-              params.newValue;
-            setRowData(updatedRows);
+          headerHeight={32}
+          rowHeight={25}
+          rowStyle={{
+            backgroundColor: 'var(--vscode-editor-background)',
+            color: 'var(--vscode-editor-foreground)',
+            borderColor: 'var(--vscode-editor-lineHighlightBorder)',
           }}
+          getRowStyle={(params: any) => ({
+            backgroundColor: params.node.isSelected() 
+              ? 'var(--vscode-editor-selectionBackground)'
+              : params.node.rowIndex % 2 === 0 
+                ? 'var(--vscode-editor-background)' 
+                : 'var(--vscode-editor-inactiveSelectionBackground)',
+          })}
         />
       </div>
     </div>
