@@ -1,0 +1,62 @@
+h1 {
+  font-family: var(--vscode-editor-font-family);
+}
+
+.app {
+  margin: 15px auto;
+  max-width: 80rem;
+}
+
+.app__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.app__error {
+  color: var(--vscode-editorError-foreground);
+}
+
+.table-container {
+  margin-top: 20px;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+}
+
+.table-wrapper {
+  margin-top: 20px;
+  width: 100%;
+  height: 500px;
+  position: relative;
+}
+
+.handsontable {
+  font-family: var(--vscode-editor-font-family);
+  background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.handsontable th {
+  background-color: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.grid-wrapper {
+  height: 500px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.ag-theme-alpine-dark {
+  --ag-background-color: var(--vscode-editor-background);
+  --ag-header-background-color: var(--vscode-editor-background);
+  --ag-odd-row-background-color: var(--vscode-editor-background);
+  --ag-header-foreground-color: var(--vscode-editor-foreground);
+  --ag-foreground-color: var(--vscode-editor-foreground);
+  --ag-row-hover-color: var(--vscode-list-hoverBackground);
+  --ag-selected-row-background-color: var(--vscode-editor-selectionBackground);
+  --ag-font-family: var(--vscode-editor-font-family);
+}
