@@ -13,6 +13,7 @@ const CsvEditor: React.FC = () => {
   const [columnDefs, setColumnDefs] = React.useState<ColDef[]>([]);
   const [selectedRows, setSelectedRows] = React.useState<number[]>([]);
   const [selectedCols, setSelectedCols] = React.useState<string[]>([]);
+  const [template, setTemplate] = React.useState('empty');
 
   const handleLoadCsv = () => {
     messageHandler.request<string>("GET_CSV_CONTENT").then((csvContent) => {
@@ -40,6 +41,34 @@ const CsvEditor: React.FC = () => {
         },
       });
     });
+  };
+
+  const handleTemplateLoad = () => {
+    messageHandler.request<string>('CREATE_FROM_TEMPLATE', template)
+      .then((csvContent) => {
+        if (csvContent) {
+          Papa.parse(csvContent, {
+            complete: (results) => {
+              const headers = results.data[0] as string[];
+              const rows = results.data.slice(1).map((row) => {
+                const obj: RowData = {};
+                (row as string[]).forEach((cell, i) => {
+                  obj[`col${i}`] = cell ? cell : cell;
+                });
+                return obj;
+              });
+              
+              const newColDefs: ColDef[] = headers.map((header, index) => ({
+                field: `col${index}`,
+                headerName: header,
+                editable: true,
+              }));
+              setColumnDefs(newColDefs);
+              setRowData(rows);
+            }
+          });
+        }
+      });
   };
 
   const handleAddRow = () => {
@@ -115,10 +144,7 @@ const CsvEditor: React.FC = () => {
         <button onClick={handleDeleteRows} disabled={selectedRows.length === 0}>
           Delete Rows
         </button>
-        <button
-          onClick={handleDeleteColumns}
-          disabled={selectedCols.length === 0}
-        >
+        <button onClick={handleDeleteColumns} disabled={selectedCols.length === 0}>
           Delete Columns
         </button>
       </div>

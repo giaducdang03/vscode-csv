@@ -20,6 +20,10 @@
       {
         "command": "vscode-react-webview-csv-editor.openCsvEditor",
         "title": "Edit with CSV Editor"
+      },
+      {
+        "command": "vscode-react-webview-csv-editor.createNew",
+        "title": "Create New CSV File"
       }
     ],
     "menus": {

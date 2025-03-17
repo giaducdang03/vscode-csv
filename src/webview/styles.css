@@ -12,6 +12,15 @@ h1 {
   gap: 1rem;
 }
 
+.app__actions select {
+  padding: 4px 8px;
+  margin-right: 8px;
+  background: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border);
+  height: 28px;
+}
+
 .app__error {
   color: var(--vscode-editorError-foreground);
 }
