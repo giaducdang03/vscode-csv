@@ -30,6 +30,24 @@
           "group": "navigation"
         }
       ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "csv-explorer",
+          "title": "CSV Explorer",
+          "icon": "$(file-code)"
+        }
+      ]
+    },
+    "views": {
+      "csv-explorer": [
+        {
+          "id": "csvEditorView",
+          "name": "CSV Files",
+          "type": "webview"
+        }
+      ]
     }
   },
   "scripts": {

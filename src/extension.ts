@@ -6,7 +6,104 @@ import { ExtensionContext, ExtensionMode, Uri, Webview } from "vscode";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { readFileSync, writeFileSync } from "fs";
 
+class CsvEditorViewProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'csvEditorView';
+
+  constructor(private readonly _extensionUri: vscode.Uri) {}
+
+  resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    _context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken,
+  ) {
+    webviewView.webview.options = {
+      enableScripts: true,
+    };
+
+    webviewView.webview.html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { padding: 15px; }
+            button, select { 
+              width: 100%;
+              margin-bottom: 10px;
+              padding: 8px;
+              background: var(--vscode-button-background);
+              color: var(--vscode-button-foreground);
+              border: none;
+              cursor: pointer;
+            }
+            select {
+              background: var(--vscode-dropdown-background);
+              color: var(--vscode-dropdown-foreground);
+              margin-bottom: 5px;
+            }
+            button:hover {
+              background: var(--vscode-button-hoverBackground);
+            }
+          </style>
+        </head>
+        <body>
+          <select id="templateSelect">
+            <option value="empty">Empty Template</option>
+            <option value="contacts">Contacts Template</option>
+            <option value="inventory">Inventory Template</option>
+          </select>
+          <button id="createNew">Create New CSV</button>
+          <button id="openEditor">Open CSV Editor</button>
+          <script>
+            const vscode = acquireVsCodeApi();
+            document.getElementById('createNew').addEventListener('click', () => {
+              const template = document.getElementById('templateSelect').value;
+              vscode.postMessage({ command: 'createFromTemplate', template });
+            });
+            document.getElementById('openEditor').addEventListener('click', () => {
+              vscode.postMessage({ command: 'openEditor' });
+            });
+          </script>
+        </body>
+      </html>
+    `;
+
+    webviewView.webview.onDidReceiveMessage(async message => {
+      if (message.command === 'openEditor') {
+        vscode.commands.executeCommand('vscode-react-webview-csv-editor.openCsvEditor');
+      } else if (message.command === 'createFromTemplate') {
+        const templatePath = join(this._extensionUri.fsPath, 'templates', `${message.template}.csv`);
+        try {
+          const templateContent = readFileSync(templatePath, 'utf-8');
+          const newFileUri = await vscode.window.showSaveDialog({
+            filters: { 'CSV Files': ['csv'] },
+            defaultUri: Uri.file('new.csv')
+          });
+
+          if (newFileUri) {
+            const data = new TextEncoder().encode(templateContent);
+            await vscode.workspace.fs.writeFile(newFileUri, data);
+            
+            // Open the file in VSCode editor first
+            await vscode.window.showTextDocument(newFileUri);
+            
+            // Then open in CSV Editor
+            vscode.commands.executeCommand('vscode-react-webview-csv-editor.openCsvEditor');
+          }
+        } catch (error) {
+          vscode.window.showErrorMessage(`Error creating file from template: ${error}`);
+        }
+      }
+    });
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
+  // Register view provider
+  const provider = new CsvEditorViewProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(CsvEditorViewProvider.viewType, provider)
+  );
+
   let currentFileUri: Uri | undefined;
 
   let disposable = vscode.commands.registerCommand(
